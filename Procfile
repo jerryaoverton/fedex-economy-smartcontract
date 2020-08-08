@@ -1,1 +1,1 @@
-web: gunicorn app:fedex_economy_smartcontract --log-file=-
+web: gunicorn -k flask_sockets.worker fedex_economy_smartcontract:app
