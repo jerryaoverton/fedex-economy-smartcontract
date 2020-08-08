@@ -1,0 +1,1 @@
+web: gunicorn app:fedex_economy_smartcontract --log-file=-
