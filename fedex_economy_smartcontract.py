@@ -35,6 +35,11 @@ def handle_message(msg):
     send(msg, broadcast=True)
 
 
+@app.route('/')
+def home():
+    return "Fedex economy smart contract is running"
+
+
 @app.route('/register_user')
 def register_user():
     user_id = request.args['user_id']
