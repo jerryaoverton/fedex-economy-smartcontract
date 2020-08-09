@@ -1,1 +1,1 @@
-web: gunicorn fedex_economy_smartcontract:app --log-file=-
+web: gunicorn --worker-class eventlet -w 1 fedex_economy_smartcontract:app
