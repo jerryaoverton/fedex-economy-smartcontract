@@ -42,7 +42,7 @@ def home():
 
 @app.route('/register_user')
 def register_user():
-    # TODO: reject if user already exists
+    # TODO: reject addition if user already exists
     user_id = request.args['user_id']
     user = {'id': user_id, 'tokens': 0, 'profile': ''}
     users.append(user)
