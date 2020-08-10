@@ -85,6 +85,11 @@ def user_profile():
     return profile
 
 
+@app.route('/list_users')
+def list_users():
+    return str(users)
+
+
 @app.route('/user_balance')
 def user_balance():
     user_id = request.args['user_id']
