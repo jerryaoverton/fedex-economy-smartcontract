@@ -28,6 +28,10 @@ user_example = {'id': "123xyz", 'tokens': 0, 'profile': profile_example}
 
 users = []
 
+# initialize the fedex user
+fedex = {'id': "fedex", 'tokens': 1000000, 'profile': ''}
+users.append(fedex)
+
 # TODO: remove this
 @socketio.on('message')
 def handle_message(msg):
@@ -58,13 +62,15 @@ def update_profile():
 
     profile_dict = ast.literal_eval(profile_string)
 
+    status_message = "profile not found"
     for user in users:
         if user['id'] == user_id:
             user['profile'] = profile_dict
             print('updating profile')
             socketio.send(str(user), namespace='/profile', broadcast=True)
+            status_message = "profile updated"
 
-    return "profile updated"
+    return status_message
 
 
 @app.route('/user_profile')
@@ -116,3 +122,5 @@ def pay():
 
 if __name__ == '__main__':
     socketio.run(app, debug=False)
+
+
