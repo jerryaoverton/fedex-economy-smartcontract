@@ -6,31 +6,14 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-order_example = {'supplier': '123abc',
-                 'customer': '456xyz',
-                 'payment_method': 'tokens',
-                 'price': 100,
-                 'order_details': 'charge the drone to 100%',
-                 'terms_and_conditions': 'must not harm drone',
-                 'status': 'complete',
-                 'status_date': '08/05/2020'
-                 }
-
-profile_example = {'image_url': 'www.pic.com/profile.jpg',
-                   'profile_url': 'www.myprofile.com',
-                   'description': 'A great and powerful technologist',
-                   'tags': 'drone_tech, programmer',
-                   'rating': 3,
-                   'status': 'active'
-                   }
-
-user_example = {'id': "123xyz", 'tokens': 0, 'profile': profile_example}
 
 users = []
+orders = {}
 
 # initialize the fedex user
 fedex = {'id': "fedex", 'tokens': 1000000, 'profile': ''}
 users.append(fedex)
+
 
 # TODO: remove this
 @socketio.on('message')
@@ -104,10 +87,40 @@ def user_balance():
 
 @app.route('/update_order')
 def update_order():
-    order = request.args['order']
+    order = ast.literal_eval(request.args['order'])
+    orders[order['order_id']] = order
+
     socketio.send(str(order), namespace='/order', broadcast=True)
 
     return "order updated"
+
+
+@app.route('/list_orders')
+def list_orders():
+    order_list = []
+    for order_id in orders:
+        order_list.append(orders[order_id])
+    return str(order_list)
+
+
+@app.route('/list_orders_by_supplier')
+def list_orders_by_supplier():
+    supplier = request.args['supplier']
+    order_list = []
+    for order_id in orders:
+        if orders[order_id]['supplier'] == supplier:
+            order_list.append(orders[order_id])
+    return str(order_list)
+
+
+@app.route('/list_orders_by_customer')
+def list_orders_by_customer():
+    customer = request.args['customer']
+    order_list = []
+    for order_id in orders:
+        if orders[order_id]['customer'] == customer:
+            order_list.append(orders[order_id])
+    return str(order_list)
 
 
 @app.route('/pay')
@@ -126,6 +139,6 @@ def pay():
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=False)
+    socketio.run(app, debug=True)
 
 
